@@ -1,0 +1,101 @@
+:root {
+  color-scheme: light;
+  font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.game-shell {
+  max-width: 940px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.12);
+}
+
+h1 {
+  margin: 0;
+}
+
+.subtitle {
+  color: #475569;
+  margin-top: 0.35rem;
+}
+
+.status-panel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 0.65rem;
+  margin: 1.25rem 0;
+}
+
+.map-wrap {
+  border: 2px solid #cbd5e1;
+  border-radius: 14px;
+  background: #eff6ff;
+  min-height: 460px;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+#stateMap {
+  width: min(100%, 760px);
+  height: auto;
+}
+
+.state-outline {
+  fill: #dbeafe;
+  stroke: #1d4ed8;
+  stroke-width: 6;
+  stroke-linejoin: round;
+}
+
+.marker {
+  stroke: #fff;
+  stroke-width: 3;
+}
+
+.guess {
+  fill: #dc2626;
+}
+
+.target {
+  fill: #16a34a;
+}
+
+.feedback-panel {
+  margin: 1rem 0;
+  font-size: 1.05rem;
+  min-height: 2rem;
+}
+
+.controls {
+  display: flex;
+  gap: 0.75rem;
+}
+
+button {
+  border: none;
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  background: #2563eb;
+  color: #fff;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+button.ghost {
+  background: #e2e8f0;
+  color: #0f172a;
+}
