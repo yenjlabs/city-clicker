@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>State City Click Challenge</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="game-shell">
+      <h1>State City Click Challenge</h1>
+      <p class="subtitle">
+        Click where you think the city is located inside the actual state outline.
+      </p>
+
+      <section class="status-panel">
+        <div><strong>Round:</strong> <span id="round">-</span></div>
+        <div><strong>State:</strong> <span id="stateName">Loading...</span></div>
+        <div><strong>Find city:</strong> <span id="cityName">Loading...</span></div>
+        <div><strong>Total score:</strong> <span id="totalScore">0</span></div>
+      </section>
+
+      <div class="map-wrap">
+        <svg id="stateMap" viewBox="0 0 1000 700" aria-label="State outline map">
+          <path id="stateOutline" class="state-outline" d="" />
+          <circle id="guessMarker" class="marker guess" r="8" visibility="hidden" />
+          <circle id="targetMarker" class="marker target" r="8" visibility="hidden" />
+        </svg>
+      </div>
+
+      <section class="feedback-panel">
+        <p id="feedback">Loading state shapes and city data…</p>
+      </section>
+
+      <div class="controls">
+        <button id="nextBtn" disabled>Next state</button>
+        <button id="restartBtn" class="ghost" disabled>Restart</button>
+      </div>
+    </main>
+
+    <script src="https://unpkg.com/topojson-client@3"></script>
+    <script src="https://unpkg.com/d3-geo@3"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
