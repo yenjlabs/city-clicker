@@ -10,13 +10,13 @@
     <main class="game-shell">
       <h1>State City Click Challenge</h1>
       <p class="subtitle">
-        Click where you think the city is inside the highlighted state outline.
+        Click where you think the city is located inside the actual state outline.
       </p>
 
       <section class="status-panel">
-        <div><strong>Round:</strong> <span id="round"></span></div>
-        <div><strong>State:</strong> <span id="stateName"></span></div>
-        <div><strong>Find city:</strong> <span id="cityName"></span></div>
+        <div><strong>Round:</strong> <span id="round">-</span></div>
+        <div><strong>State:</strong> <span id="stateName">Loading...</span></div>
+        <div><strong>Find city:</strong> <span id="cityName">Loading...</span></div>
         <div><strong>Total score:</strong> <span id="totalScore">0</span></div>
       </section>
 
@@ -29,15 +29,17 @@
       </div>
 
       <section class="feedback-panel">
-        <p id="feedback">Click inside the state to place your guess.</p>
+        <p id="feedback">Loading state shapes and city data…</p>
       </section>
 
       <div class="controls">
         <button id="nextBtn" disabled>Next state</button>
-        <button id="restartBtn" class="ghost">Restart</button>
+        <button id="restartBtn" class="ghost" disabled>Restart</button>
       </div>
     </main>
 
+    <script src="https://unpkg.com/topojson-client@3"></script>
+    <script src="https://unpkg.com/d3-geo@3"></script>
     <script src="script.js"></script>
   </body>
 </html>

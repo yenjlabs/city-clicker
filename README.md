@@ -1,6 +1,11 @@
 # State City Click Challenge
 
-A lightweight browser game where you see a US state outline and click where you think a target city is located. You score points based on how close your guess is.
+A browser game where you see a real US state outline and click where you think the target city is located.
+
+## Gameplay
+- Uses **all 50 US states**.
+- Uses real state geometry from the US Atlas state dataset (derived from Census shapefiles).
+- Scoring is based on geographic distance in **miles** (great-circle distance via haversine formula).
 
 ## Can I play it on GitHub?
 Yes — this repository is set up for **GitHub Pages** deployment.
@@ -15,7 +20,7 @@ After pushing to the `main` branch, GitHub Actions deploys the site automaticall
 3. Push to `main` (or run the workflow manually from **Actions**).
 
 ## Local development
-Because this is static HTML/CSS/JS, you can run a local web server:
+Run a local static server:
 
 ```bash
 python3 -m http.server 4173
