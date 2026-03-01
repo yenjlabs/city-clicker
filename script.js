@@ -309,6 +309,8 @@ const LARGEST_CITIES_BY_STATE = {
   ],
 };
 
+const ALLOWED_STATE_COUNTS = [5, 10, 25, 50];
+
 const stateOutline = document.getElementById("stateOutline");
 const guessMarker = document.getElementById("guessMarker");
 const targetMarker = document.getElementById("targetMarker");
@@ -317,6 +319,7 @@ const roundEl = document.getElementById("round");
 const stateEl = document.getElementById("stateName");
 const cityEl = document.getElementById("cityName");
 const totalScoreEl = document.getElementById("totalScore");
+const averageScoreEl = document.getElementById("averageScore");
 const feedbackEl = document.getElementById("feedback");
 const nextBtn = document.getElementById("nextBtn");
 const restartBtn = document.getElementById("restartBtn");
@@ -327,12 +330,16 @@ const FIT_EXTENT = [
   [SVG_SIZE.width - 70, SVG_SIZE.height - 70],
 ];
 
-let rounds = [];
-let roundIndex = 0;
+let allStateRounds = [];
+let selectedStateRounds = [];
+let stateIndex = 0;
+let cityIndex = 0;
 let totalScore = 0;
+let totalGuesses = 0;
 let guessedThisRound = false;
 let projection = null;
 let pathGenerator = null;
+let currentStateRound = null;
 let currentRound = null;
 
 function shuffle(array) {
@@ -378,35 +385,74 @@ function getSvgPoint(event) {
   return point.matrixTransform(stateMap.getScreenCTM().inverse());
 }
 
+function updateScoreboard() {
+  totalScoreEl.textContent = String(totalScore);
+  const average = totalGuesses === 0 ? 0 : totalScore / totalGuesses;
+  averageScoreEl.textContent = average.toFixed(1);
+}
+
+function getOverallRoundIndex() {
+  return stateIndex * 3 + cityIndex;
+}
+
+function getTotalRounds() {
+  return selectedStateRounds.length * 3;
+}
+
 function drawRound() {
-  currentRound = rounds[roundIndex];
-  projection = d3.geoAlbers().fitExtent(FIT_EXTENT, currentRound.feature);
+  currentStateRound = selectedStateRounds[stateIndex];
+  currentRound = currentStateRound.cities[cityIndex];
+  projection = d3.geoAlbers().fitExtent(FIT_EXTENT, currentStateRound.feature);
   pathGenerator = d3.geoPath(projection);
 
-  stateOutline.setAttribute("d", pathGenerator(currentRound.feature));
-  roundEl.textContent = `${roundIndex + 1} / ${rounds.length}`;
-  stateEl.textContent = currentRound.state;
+  stateOutline.setAttribute("d", pathGenerator(currentStateRound.feature));
+  roundEl.textContent = `${getOverallRoundIndex() + 1} / ${getTotalRounds()}`;
+  stateEl.textContent = currentStateRound.state;
   cityEl.textContent = currentRound.city;
   feedbackEl.textContent = "Click inside the state outline to place your guess.";
 
   guessedThisRound = false;
   nextBtn.disabled = true;
   restartBtn.disabled = false;
+  nextBtn.textContent = cityIndex < 2 ? "Next city" : "Next state";
   hideMarker(guessMarker);
   hideMarker(targetMarker);
 }
 
 function endGame() {
-  feedbackEl.textContent = `Game complete! Final score: ${totalScore} / ${rounds.length * 100}. Press restart to play again.`;
+  feedbackEl.textContent = `Game complete! Final total score: ${totalScore} / ${getTotalRounds() * 100}. Final average: ${averageScoreEl.textContent}. Press restart to play again.`;
   nextBtn.disabled = true;
   guessedThisRound = true;
 }
 
-function restartGame() {
-  roundIndex = 0;
+function chooseStateCount() {
+  const answer = window.prompt(
+    "How many states would you like to play? Enter 5, 10, 25, or 50.",
+    "10",
+  );
+
+  if (answer === null) {
+    return 10;
+  }
+
+  const value = Number.parseInt(answer.trim(), 10);
+  if (ALLOWED_STATE_COUNTS.includes(value)) {
+    return value;
+  }
+
+  window.alert("Invalid choice. Starting a 10-state game.");
+  return 10;
+}
+
+function startNewGameFromSelection() {
+  const selectedStateCount = chooseStateCount();
+  selectedStateRounds = shuffle(allStateRounds).slice(0, selectedStateCount);
+
+  stateIndex = 0;
+  cityIndex = 0;
   totalScore = 0;
-  totalScoreEl.textContent = "0";
-  rounds = shuffle(rounds);
+  totalGuesses = 0;
+  updateScoreboard();
   drawRound();
 }
 
@@ -420,7 +466,7 @@ async function initializeGame() {
     const topo = await response.json();
     const features = topojson.feature(topo, topo.objects.states).features;
 
-    rounds = features
+    allStateRounds = features
       .map((feature) => {
         const fips = String(feature.id).padStart(2, "0");
         const stateName = STATE_FIPS_TO_NAME[fips];
@@ -431,31 +477,32 @@ async function initializeGame() {
           return null;
         }
 
-        const roundCities = [capital, ...largestCities]
+        const cities = [capital, ...largestCities]
           .filter((city, index, list) => list.findIndex((candidate) => candidate.city === city.city) === index)
-          .slice(0, 3);
+          .slice(0, 3)
+          .map((city) => ({
+            city: city.city,
+            target: { lat: city.lat, lon: city.lon },
+          }));
 
-        if (roundCities.length < 3) {
+        if (cities.length < 3) {
           return null;
         }
 
-        return roundCities.map((city) => ({
+        return {
           state: stateName,
-          city: city.city,
-          target: { lat: city.lat, lon: city.lon },
           feature,
-        }));
+          cities,
+        };
       })
-      .flat()
       .filter(Boolean);
 
-    if (rounds.length !== 150) {
-      throw new Error(`Expected 150 rounds but loaded ${rounds.length}`);
+    if (allStateRounds.length !== 50) {
+      throw new Error(`Expected 50 states but loaded ${allStateRounds.length}`);
     }
 
-    rounds = shuffle(rounds);
     restartBtn.disabled = false;
-    drawRound();
+    startNewGameFromSelection();
   } catch (error) {
     feedbackEl.textContent = `Unable to load game data: ${error.message}`;
     stateEl.textContent = "Unavailable";
@@ -481,7 +528,7 @@ stateMap.addEventListener("click", (event) => {
 
   const [guessLon, guessLat] = guessedLonLat;
 
-  if (!d3.geoContains(currentRound.feature, [guessLon, guessLat])) {
+  if (!d3.geoContains(currentStateRound.feature, [guessLon, guessLat])) {
     feedbackEl.textContent = "Please click inside the state outline.";
     return;
   }
@@ -496,7 +543,8 @@ stateMap.addEventListener("click", (event) => {
   const roundScore = getRoundScore(distanceMiles);
 
   totalScore += roundScore;
-  totalScoreEl.textContent = String(totalScore);
+  totalGuesses += 1;
+  updateScoreboard();
 
   showMarker(guessMarker, clickPoint.x, clickPoint.y);
   showMarker(targetMarker, targetPoint[0], targetPoint[1]);
@@ -508,25 +556,34 @@ stateMap.addEventListener("click", (event) => {
 });
 
 nextBtn.addEventListener("click", () => {
-  if (!guessedThisRound || rounds.length === 0) {
+  if (!guessedThisRound || selectedStateRounds.length === 0) {
     return;
   }
 
-  if (roundIndex >= rounds.length - 1) {
+  const isLastCityInState = cityIndex === 2;
+  const isLastState = stateIndex >= selectedStateRounds.length - 1;
+
+  if (isLastCityInState && isLastState) {
     endGame();
     return;
   }
 
-  roundIndex += 1;
+  if (isLastCityInState) {
+    stateIndex += 1;
+    cityIndex = 0;
+  } else {
+    cityIndex += 1;
+  }
+
   drawRound();
 });
 
 restartBtn.addEventListener("click", () => {
-  if (rounds.length === 0) {
+  if (allStateRounds.length === 0) {
     return;
   }
 
-  restartGame();
+  startNewGameFromSelection();
 });
 
 initializeGame();
