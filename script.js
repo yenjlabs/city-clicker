@@ -316,13 +316,13 @@ const guessMarker = document.getElementById("guessMarker");
 const targetMarker = document.getElementById("targetMarker");
 const stateMap = document.getElementById("stateMap");
 const roundEl = document.getElementById("round");
-const stateEl = document.getElementById("stateName");
-const cityEl = document.getElementById("cityName");
+const locationEl = document.getElementById("location");
 const totalScoreEl = document.getElementById("totalScore");
 const averageScoreEl = document.getElementById("averageScore");
 const feedbackEl = document.getElementById("feedback");
-const nextBtn = document.getElementById("nextBtn");
 const restartBtn = document.getElementById("restartBtn");
+const gameLengthPicker = document.getElementById("gameLengthPicker");
+const gameLengthButtons = Array.from(document.querySelectorAll(".length-btn"));
 
 const SVG_SIZE = { width: 1000, height: 700 };
 const FIT_EXTENT = [
@@ -341,6 +341,7 @@ let projection = null;
 let pathGenerator = null;
 let currentStateRound = null;
 let currentRound = null;
+let gameStarted = false;
 
 function shuffle(array) {
   const output = [...array];
@@ -372,6 +373,10 @@ function haversineMiles(lat1, lon1, lat2, lon2) {
   return 2 * earthRadiusMiles * Math.asin(Math.sqrt(a));
 }
 
+function formatScore(value) {
+  return Math.round(value).toLocaleString("en-US");
+}
+
 function getRoundScore(distanceMiles) {
   const maxDistanceForPoints = 300;
   const normalized = Math.max(0, 1 - distanceMiles / maxDistanceForPoints);
@@ -386,9 +391,9 @@ function getSvgPoint(event) {
 }
 
 function updateScoreboard() {
-  totalScoreEl.textContent = String(totalScore);
+  totalScoreEl.textContent = formatScore(totalScore);
   const average = totalGuesses === 0 ? 0 : totalScore / totalGuesses;
-  averageScoreEl.textContent = average.toFixed(1);
+  averageScoreEl.textContent = formatScore(average);
 }
 
 function getOverallRoundIndex() {
@@ -407,51 +412,50 @@ function drawRound() {
 
   stateOutline.setAttribute("d", pathGenerator(currentStateRound.feature));
   roundEl.textContent = `${getOverallRoundIndex() + 1} / ${getTotalRounds()}`;
-  stateEl.textContent = currentStateRound.state;
-  cityEl.textContent = currentRound.city;
+  locationEl.textContent = `${currentRound.city}, ${currentStateRound.state}`;
   feedbackEl.textContent = "Click inside the state outline to place your guess.";
 
   guessedThisRound = false;
-  nextBtn.disabled = true;
   restartBtn.disabled = false;
-  nextBtn.textContent = cityIndex < 2 ? "Next city" : "Next state";
   hideMarker(guessMarker);
   hideMarker(targetMarker);
 }
 
 function endGame() {
-  feedbackEl.textContent = `Game complete! Final total score: ${totalScore} / ${getTotalRounds() * 100}. Final average: ${averageScoreEl.textContent}. Press restart to play again.`;
-  nextBtn.disabled = true;
+  feedbackEl.textContent = `Game complete! Final total score: ${formatScore(totalScore)} / ${formatScore(
+    getTotalRounds() * 100,
+  )}. Final average: ${averageScoreEl.textContent}. Press restart to play again.`;
   guessedThisRound = true;
 }
 
-function chooseStateCount() {
-  const answer = window.prompt(
-    "How many states would you like to play? Enter 5, 10, 25, or 50.",
-    "10",
-  );
+function advanceRound() {
+  const isLastCityInState = cityIndex === 2;
+  const isLastState = stateIndex >= selectedStateRounds.length - 1;
 
-  if (answer === null) {
-    return 10;
+  if (isLastCityInState && isLastState) {
+    endGame();
+    return;
   }
 
-  const value = Number.parseInt(answer.trim(), 10);
-  if (ALLOWED_STATE_COUNTS.includes(value)) {
-    return value;
+  if (isLastCityInState) {
+    stateIndex += 1;
+    cityIndex = 0;
+  } else {
+    cityIndex += 1;
   }
 
-  window.alert("Invalid choice. Starting a 10-state game.");
-  return 10;
+  drawRound();
 }
 
-function startNewGameFromSelection() {
-  const selectedStateCount = chooseStateCount();
+function startNewGameFromSelection(selectedStateCount) {
   selectedStateRounds = shuffle(allStateRounds).slice(0, selectedStateCount);
 
   stateIndex = 0;
   cityIndex = 0;
   totalScore = 0;
   totalGuesses = 0;
+  gameStarted = true;
+  gameLengthPicker.hidden = true;
   updateScoreboard();
   drawRound();
 }
@@ -501,20 +505,25 @@ async function initializeGame() {
       throw new Error(`Expected 50 states but loaded ${allStateRounds.length}`);
     }
 
-    restartBtn.disabled = false;
-    startNewGameFromSelection();
+    gameLengthPicker.hidden = false;
+    feedbackEl.textContent = "Choose a game length to begin.";
+    restartBtn.disabled = true;
   } catch (error) {
     feedbackEl.textContent = `Unable to load game data: ${error.message}`;
-    stateEl.textContent = "Unavailable";
-    cityEl.textContent = "Unavailable";
+    locationEl.textContent = "Unavailable";
     roundEl.textContent = "-";
-    nextBtn.disabled = true;
     restartBtn.disabled = true;
+    gameLengthPicker.hidden = true;
   }
 }
 
 stateMap.addEventListener("click", (event) => {
-  if (guessedThisRound || !currentRound || !projection) {
+  if (!gameStarted || !currentRound || !projection) {
+    return;
+  }
+
+  if (guessedThisRound) {
+    advanceRound();
     return;
   }
 
@@ -549,33 +558,27 @@ stateMap.addEventListener("click", (event) => {
   showMarker(guessMarker, clickPoint.x, clickPoint.y);
   showMarker(targetMarker, targetPoint[0], targetPoint[1]);
 
-  feedbackEl.textContent = `You were ${distanceMiles.toFixed(1)} miles away. Round score: ${roundScore} / 100.`;
+  const isNextState = cityIndex === 2;
+  feedbackEl.textContent = `You were ${formatScore(distanceMiles)} miles away. Round score: ${formatScore(roundScore)} / 100. Click for next ${
+    isNextState ? "state" : "city"
+  }.`;
 
   guessedThisRound = true;
-  nextBtn.disabled = false;
 });
 
-nextBtn.addEventListener("click", () => {
-  if (!guessedThisRound || selectedStateRounds.length === 0) {
-    return;
-  }
+gameLengthButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    if (allStateRounds.length === 0) {
+      return;
+    }
 
-  const isLastCityInState = cityIndex === 2;
-  const isLastState = stateIndex >= selectedStateRounds.length - 1;
+    const selected = Number.parseInt(button.dataset.states || "", 10);
+    if (!ALLOWED_STATE_COUNTS.includes(selected)) {
+      return;
+    }
 
-  if (isLastCityInState && isLastState) {
-    endGame();
-    return;
-  }
-
-  if (isLastCityInState) {
-    stateIndex += 1;
-    cityIndex = 0;
-  } else {
-    cityIndex += 1;
-  }
-
-  drawRound();
+    startNewGameFromSelection(selected);
+  });
 });
 
 restartBtn.addEventListener("click", () => {
@@ -583,7 +586,11 @@ restartBtn.addEventListener("click", () => {
     return;
   }
 
-  startNewGameFromSelection();
+  gameStarted = false;
+  gameLengthPicker.hidden = false;
+  feedbackEl.textContent = "Choose a game length to begin.";
+  hideMarker(guessMarker);
+  hideMarker(targetMarker);
 });
 
 initializeGame();
