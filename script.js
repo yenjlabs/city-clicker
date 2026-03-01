@@ -116,20 +116,20 @@ const LARGEST_CITIES_BY_STATE = {
     { city: "Fairbanks", lat: 64.8378, lon: -147.7164 },
   ],
   Arizona: [
-    { city: "Phoenix", lat: 33.4481, lon: -112.074 },
     { city: "Tucson", lat: 32.2226, lon: -110.9747 },
+    { city: "Mesa", lat: 33.4152, lon: -111.8315 },
   ],
   Arkansas: [
-    { city: "Little Rock", lat: 34.7465, lon: -92.2896 },
     { city: "Fayetteville", lat: 36.0822, lon: -94.1719 },
+    { city: "Fort Smith", lat: 35.3859, lon: -94.3985 },
   ],
   California: [
     { city: "Los Angeles", lat: 34.0522, lon: -118.2437 },
     { city: "San Diego", lat: 32.7157, lon: -117.1611 },
   ],
   Colorado: [
-    { city: "Denver", lat: 39.7392, lon: -104.9903 },
     { city: "Colorado Springs", lat: 38.8339, lon: -104.8214 },
+    { city: "Aurora", lat: 39.7294, lon: -104.8319 },
   ],
   Connecticut: [
     { city: "Bridgeport", lat: 41.1792, lon: -73.1894 },
@@ -144,28 +144,28 @@ const LARGEST_CITIES_BY_STATE = {
     { city: "Miami", lat: 25.7617, lon: -80.1918 },
   ],
   Georgia: [
-    { city: "Atlanta", lat: 33.749, lon: -84.388 },
     { city: "Columbus", lat: 32.4609, lon: -84.9877 },
+    { city: "Augusta", lat: 33.4735, lon: -82.0105 },
   ],
   Hawaii: [
-    { city: "Honolulu", lat: 21.3069, lon: -157.8583 },
     { city: "East Honolulu", lat: 21.2766, lon: -157.7065 },
+    { city: "Pearl City", lat: 21.3972, lon: -157.9756 },
   ],
   Idaho: [
-    { city: "Boise", lat: 43.615, lon: -116.2023 },
     { city: "Meridian", lat: 43.6121, lon: -116.3915 },
+    { city: "Nampa", lat: 43.5407, lon: -116.5635 },
   ],
   Illinois: [
     { city: "Chicago", lat: 41.8781, lon: -87.6298 },
     { city: "Aurora", lat: 41.7606, lon: -88.3201 },
   ],
   Indiana: [
-    { city: "Indianapolis", lat: 39.7684, lon: -86.1581 },
     { city: "Fort Wayne", lat: 41.0793, lon: -85.1394 },
+    { city: "Evansville", lat: 37.9716, lon: -87.5711 },
   ],
   Iowa: [
-    { city: "Des Moines", lat: 41.5868, lon: -93.625 },
     { city: "Cedar Rapids", lat: 41.9779, lon: -91.6656 },
+    { city: "Davenport", lat: 41.5236, lon: -90.5776 },
   ],
   Kansas: [
     { city: "Wichita", lat: 37.6872, lon: -97.3301 },
@@ -177,7 +177,7 @@ const LARGEST_CITIES_BY_STATE = {
   ],
   Louisiana: [
     { city: "New Orleans", lat: 29.9511, lon: -90.0715 },
-    { city: "Baton Rouge", lat: 30.4515, lon: -91.1871 },
+    { city: "Shreveport", lat: 32.5252, lon: -93.7502 },
   ],
   Maine: [
     { city: "Portland", lat: 43.6591, lon: -70.2568 },
@@ -188,8 +188,8 @@ const LARGEST_CITIES_BY_STATE = {
     { city: "Frederick", lat: 39.4143, lon: -77.4105 },
   ],
   Massachusetts: [
-    { city: "Boston", lat: 42.3601, lon: -71.0589 },
     { city: "Worcester", lat: 42.2626, lon: -71.8023 },
+    { city: "Springfield", lat: 42.1015, lon: -72.5898 },
   ],
   Michigan: [
     { city: "Detroit", lat: 42.3314, lon: -83.0458 },
@@ -197,11 +197,11 @@ const LARGEST_CITIES_BY_STATE = {
   ],
   Minnesota: [
     { city: "Minneapolis", lat: 44.9778, lon: -93.265 },
-    { city: "Saint Paul", lat: 44.9537, lon: -93.09 },
+    { city: "Rochester", lat: 44.0121, lon: -92.4802 },
   ],
   Mississippi: [
-    { city: "Jackson", lat: 32.2988, lon: -90.1848 },
     { city: "Gulfport", lat: 30.3674, lon: -89.0928 },
+    { city: "Southaven", lat: 34.9889, lon: -90.0126 },
   ],
   Missouri: [
     { city: "Kansas City", lat: 39.0997, lon: -94.5786 },
@@ -213,7 +213,7 @@ const LARGEST_CITIES_BY_STATE = {
   ],
   Nebraska: [
     { city: "Omaha", lat: 41.2565, lon: -95.9345 },
-    { city: "Lincoln", lat: 40.8136, lon: -96.7026 },
+    { city: "Bellevue", lat: 41.1544, lon: -95.9146 },
   ],
   Nevada: [
     { city: "Las Vegas", lat: 36.1699, lon: -115.1398 },
@@ -237,19 +237,19 @@ const LARGEST_CITIES_BY_STATE = {
   ],
   "North Carolina": [
     { city: "Charlotte", lat: 35.2271, lon: -80.8431 },
-    { city: "Raleigh", lat: 35.7796, lon: -78.6382 },
+    { city: "Greensboro", lat: 36.0726, lon: -79.792 },
   ],
   "North Dakota": [
     { city: "Fargo", lat: 46.8772, lon: -96.7898 },
-    { city: "Bismarck", lat: 46.8083, lon: -100.7837 },
+    { city: "Grand Forks", lat: 47.9253, lon: -97.0329 },
   ],
   Ohio: [
-    { city: "Columbus", lat: 39.9612, lon: -82.9988 },
     { city: "Cleveland", lat: 41.4993, lon: -81.6944 },
+    { city: "Cincinnati", lat: 39.1031, lon: -84.512 },
   ],
   Oklahoma: [
-    { city: "Oklahoma City", lat: 35.4676, lon: -97.5164 },
     { city: "Tulsa", lat: 36.154, lon: -95.9928 },
+    { city: "Norman", lat: 35.2226, lon: -97.4395 },
   ],
   Oregon: [
     { city: "Portland", lat: 45.5152, lon: -122.6784 },
@@ -260,28 +260,28 @@ const LARGEST_CITIES_BY_STATE = {
     { city: "Pittsburgh", lat: 40.4406, lon: -79.9959 },
   ],
   "Rhode Island": [
-    { city: "Providence", lat: 41.824, lon: -71.4128 },
     { city: "Warwick", lat: 41.7001, lon: -71.4162 },
+    { city: "Cranston", lat: 41.7798, lon: -71.4373 },
   ],
   "South Carolina": [
     { city: "Charleston", lat: 32.7765, lon: -79.9311 },
-    { city: "Columbia", lat: 34.0007, lon: -81.0348 },
+    { city: "North Charleston", lat: 32.8546, lon: -79.9748 },
   ],
   "South Dakota": [
     { city: "Sioux Falls", lat: 43.546, lon: -96.7313 },
     { city: "Rapid City", lat: 44.0805, lon: -103.231 },
   ],
   Tennessee: [
-    { city: "Nashville", lat: 36.1627, lon: -86.7816 },
     { city: "Memphis", lat: 35.1495, lon: -90.049 },
+    { city: "Knoxville", lat: 35.9606, lon: -83.9207 },
   ],
   Texas: [
     { city: "Houston", lat: 29.7604, lon: -95.3698 },
     { city: "San Antonio", lat: 29.4241, lon: -98.4936 },
   ],
   Utah: [
-    { city: "Salt Lake City", lat: 40.7608, lon: -111.891 },
     { city: "West Valley City", lat: 40.6916, lon: -112.0011 },
+    { city: "West Jordan", lat: 40.6097, lon: -111.9391 },
   ],
   Vermont: [
     { city: "Burlington", lat: 44.4759, lon: -73.2121 },
@@ -296,16 +296,16 @@ const LARGEST_CITIES_BY_STATE = {
     { city: "Spokane", lat: 47.6588, lon: -117.426 },
   ],
   "West Virginia": [
-    { city: "Charleston", lat: 38.3498, lon: -81.6326 },
     { city: "Huntington", lat: 38.4192, lon: -82.4452 },
+    { city: "Morgantown", lat: 39.6295, lon: -79.9559 },
   ],
   Wisconsin: [
     { city: "Milwaukee", lat: 43.0389, lon: -87.9065 },
-    { city: "Madison", lat: 43.0731, lon: -89.4012 },
+    { city: "Green Bay", lat: 44.5133, lon: -88.0133 },
   ],
   Wyoming: [
-    { city: "Cheyenne", lat: 41.14, lon: -104.8202 },
     { city: "Casper", lat: 42.8666, lon: -106.3131 },
+    { city: "Gillette", lat: 44.2911, lon: -105.5022 },
   ],
 };
 
