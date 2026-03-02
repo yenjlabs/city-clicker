@@ -377,10 +377,27 @@ function formatScore(value) {
   return Math.round(value).toLocaleString("en-US");
 }
 
-function getRoundScore(distanceMiles) {
-  const maxDistanceForPoints = 300;
-  const normalized = Math.max(0, 1 - distanceMiles / maxDistanceForPoints);
-  return Math.round(normalized * 100);
+function computeStateRadiusMiles(feature) {
+  const [[minLon, minLat], [maxLon, maxLat]] = d3.geoBounds(feature);
+  const centerLat = (minLat + maxLat) / 2;
+  const centerLon = (minLon + maxLon) / 2;
+  const corners = [
+    [minLat, minLon],
+    [minLat, maxLon],
+    [maxLat, minLon],
+    [maxLat, maxLon],
+  ];
+
+  const radiusMiles = Math.max(
+    ...corners.map(([lat, lon]) => haversineMiles(centerLat, centerLon, lat, lon)),
+  );
+
+  return Math.max(radiusMiles, 1);
+}
+
+function getRoundScore(distanceMiles, stateRadiusMiles) {
+  const normalized = Math.max(0, 1 - (distanceMiles / stateRadiusMiles) ** 2);
+  return Math.round(100 * normalized);
 }
 
 function getSvgPoint(event) {
@@ -496,6 +513,7 @@ async function initializeGame() {
         return {
           state: stateName,
           feature,
+          stateRadiusMiles: computeStateRadiusMiles(feature),
           cities,
         };
       })
@@ -549,7 +567,7 @@ stateMap.addEventListener("click", (event) => {
     currentRound.target.lat,
     currentRound.target.lon,
   );
-  const roundScore = getRoundScore(distanceMiles);
+  const roundScore = getRoundScore(distanceMiles, currentStateRound.stateRadiusMiles);
 
   totalScore += roundScore;
   totalGuesses += 1;
