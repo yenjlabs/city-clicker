@@ -396,7 +396,11 @@ function computeStateRadiusMiles(feature) {
 }
 
 function getRoundScore(distanceMiles, stateRadiusMiles) {
-  const normalized = Math.max(0, 1 - Math.sqrt(distanceMiles / stateRadiusMiles));
+  if (distanceMiles <= 10) {
+    return 100;
+  }
+
+  const normalized = Math.max(0, 1 - (2 * distanceMiles / stateRadiusMiles) ** 2);
   return Math.round(100 * normalized);
 }
 
