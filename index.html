@@ -3,21 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>State City Click Challenge</title>
+    <title>City Clicker</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <main class="game-shell">
-      <h1>State City Click Challenge</h1>
+      <h1>City Clicker</h1>
       <p class="subtitle">
         Click where you think the city is located inside the actual state outline.
       </p>
 
+      <section id="gameLengthPicker" class="game-length-picker" hidden>
+        <p><strong>Choose game length:</strong></p>
+        <div class="length-buttons">
+          <button class="length-btn" data-states="5">5 states</button>
+          <button class="length-btn" data-states="10">10 states</button>
+          <button class="length-btn" data-states="25">25 states</button>
+          <button class="length-btn" data-states="50">50 states</button>
+        </div>
+      </section>
+
       <section class="status-panel">
         <div><strong>Round:</strong> <span id="round">-</span></div>
-        <div><strong>State:</strong> <span id="stateName">Loading...</span></div>
-        <div><strong>Find city:</strong> <span id="cityName">Loading...</span></div>
+        <div><strong>Location:</strong> <span id="location">Loading...</span></div>
         <div><strong>Total score:</strong> <span id="totalScore">0</span></div>
+        <div><strong>Average score:</strong> <span id="averageScore">0</span></div>
       </section>
 
       <div class="map-wrap">
@@ -33,7 +43,6 @@
       </section>
 
       <div class="controls">
-        <button id="nextBtn" disabled>Next state</button>
         <button id="restartBtn" class="ghost" disabled>Restart</button>
       </div>
     </main>
